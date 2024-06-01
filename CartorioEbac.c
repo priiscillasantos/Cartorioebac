@@ -136,7 +136,8 @@ int main() //Função responsável por executrar o programa.
 		printf("  Escolha a opção desejada no menu:\n\n");
 		printf("\t1- Registrar nomes.\n");
 		printf("\t2- Consultar nomes.\n");
-		printf("\t3- Deletar nomes.\n\n"); //Final do menu.	
+		printf("\t3- Deletar nomes.\n");
+		printf("\t4- Sair do programa.\n\n");//Final do menu.	
 	
 		printf(" Digite a opção desejada: ");
 		scanf("%d", &opcao); //Armazena a escolha do usuário.
@@ -155,7 +156,12 @@ int main() //Função responsável por executrar o programa.
 			
 			case 3: 
 			deletar(); //Função chamada para deletar nomes. 
-			break; 	
+			break; 
+			
+			case 4:
+			printf("Obrigado por utilizar o programa.\nSaindo do sistema...\n\n");
+			return 0;
+			break;
 			
 			default: 
 				printf("\n Essa opção não está disponivél!\n\n");
