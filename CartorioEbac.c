@@ -3,10 +3,135 @@
 #include <locale.h> //Biblioteca responsável por alocar texto por região.
 #include <string.h> //Biblioteca responsável por cuidar das strings.
 
+int registroUsuario()//Função para registro de um novo usuário.
+{
+	//Variáveis resposáveis pelo armazenamento das informações que serão coletadas. 
+	char usuario[10];
+	char nomeCompleto[50];
+	char email[50];
+	char confirmaEmail[50];
+	char senha[10];
+	char confirmaSenha[10];
+	
+	printf("Digite o nome do usuário que deseja cadastrar: ");
+	scanf("%s", usuario); //Váriavél que armazenará o usuario que será criado.
+	
+	FILE *file; 
+	file = fopen("users.txt", "a");//Função que irá criar o arquivo que conterá as informações de login e usuário.
+	fprintf(file,"Usuario:%s\n", usuario);
+	fclose(file);
+		
+	printf("Digite o Nome completo do usuário que deseja cadastrar: ");
+	scanf("%s", nomeCompleto); //Váriavél que armazenará o Nome completo do usuário que será criado.
+	
+	file = fopen("users.txt", "a");//Função que irá criar o arquivo que conterá as informações de login e usuário.
+	fprintf(file,"Nome Completo:%s\n", nomeCompleto);
+	fclose(file);
+	
+	while(1)
+	{
+		printf("Digite o email do usuário que deseja cadastrar: ");
+		scanf("%s", email); //Váriavél que armazenará o email do usuário que será criado.
+		printf("Digite novamente o email do usuário que deseja cadastrar: ");
+		scanf("%s", confirmaEmail);
+		
+		if (strcmp (email,confirmaEmail) == 0) // Função que fará a comparação se os campos digitados estão iguais.
+		{
+			file = fopen("users.txt", "a"); //A verificação sendo verdadeira, a senha será salva no arquivo.
+			fprintf(file,"Email:%s\n", email);
+			fclose(file);
+			break;
+		}
+		else 
+		{
+			printf("Os endereços de email não correspondem. Tente novamente\n");
+		}
+	}
+		
+	while(1)
+	{
+		printf("Digite a senha do usuário que deseja cadastrar: ");
+		scanf("%s", senha); //Váriavél que armazenará o senha do usuário que será criado.
+		printf("Digite novamente a senha do usuário que deseja cadastrar: ");
+		scanf("%s", confirmaSenha);
+		
+		if (strcmp (senha,confirmaSenha) == 0)// Função que fará a comparação se os campos digitados estão iguais.
+		{
+			file = fopen("users.txt", "a"); //A verificação sendo verdadeira, a senha será salva no arquivo.
+			fprintf(file,"Senha:%s\n\n", senha);
+			fclose(file);
+			break;
+		}
+		else 
+		{
+			printf("As senhas não correspondem. Tente novamente\n");
+		}
+	}
+	
+	printf("\nUsuário criado com sucesso!\n\n");
+	system("pause");
+	
+	
+}
+
+int loginUsuario() //Função para efetuar o login no sistema.
+{
+	setlocale(LC_ALL, "Portuguese");//Comando que irá procurar e definir a língua que será executada.
+	
+	//Variáveis resposáveis pelo armazenamento das informações que serão coletadas. 
+	char arquivoLinha[100];
+	char usuario[10];
+	char senha[10];
+	char conteudoUsuario[10];
+	char conteudoSenha[10];
+	int loginSucesso = 0;
+	
+	printf("Digite login de usuário: ");
+	scanf("%s", usuario);
+	printf("Digite senha do usuário: ");
+	scanf("%s", senha);
+	
+	FILE *file;
+	file = fopen("users.txt","r"); //Fará a abertura do arquivo user.txt e então fará a leitura para verificação do login.
+	
+	while(fgets(arquivoLinha, sizeof(arquivoLinha), file)) //Função de loop que lera linha por linha até encontrar uma combinação de usuário e senha. 
+	{
+		sscanf(arquivoLinha, "Usuario:%s", conteudoUsuario); //Extrai o nome de usuário da linha lida do arquivo, que deve estar no formato "Usuario: nome_do_usuario"
+		if (strcmp(usuario, conteudoUsuario) == 0)//Faz a comparação para validar se as informações de usuario coletada são iguais a que consta no arquivo users.txt. 
+		{
+			fgets(arquivoLinha, sizeof(arquivoLinha), file); //Pula a linha do nome completo.
+			fgets(arquivoLinha, sizeof(arquivoLinha), file); //Pula a linha do email.
+			fgets(arquivoLinha, sizeof(arquivoLinha), file); //Lê a linha da senha.
+			
+			sscanf(arquivoLinha, "Senha:%s", conteudoSenha); // //Extrai o nome de usuário da linha lida do arquivo, que deve estar no formato "Senha: senha_do_usuário"
+			if (strcmp(senha, conteudoSenha) == 0) //Faz a comparação para validar se as informações de senha coletada são iguais a que consta no arquivo users.txt.
+			{
+				loginSucesso = 1; //Caso a verificação de usuário e sejam verdadeiros, o login será definido como 1 para indicar que foi bem-sucedido. 
+				break;
+			}
+		}
+	}
+	
+	fclose(file); //fecha o arquivo.
+		
+	if (loginSucesso)//Retornando loginsucesso = 1, irá entrar no sistema.
+	{
+		printf("\nLogin bem-sucedido.\n\n");
+		system("pause");
+		return 1;
+	}
+	else //Do contrario, será mostrado uma mensagem de erro e solicitando que o usuário tente o login novamente. 
+	{
+		printf("\nUsuário ou Senhas incorretos! Tente novamente.\n\n");
+		system("pause");
+		return 0;
+	}
+}
+
 int registro() //Função que será executada quando a opção for 1.
 {
  //Variáveis resposáveis pelo armazenamento das informações que serão coletadas. 
-	char arquivo [40];
+	char arquivoRegistro [40];
 	char cpf [40];
 	char nome [40];
 	char sobrenome [40];
@@ -15,43 +140,31 @@ int registro() //Função que será executada quando a opção for 1.
 	printf(" Digite o CPF a ser cadastrado: "); //Pergunta ao usuário para realizar a coleta da informação desejada.
 	scanf("%s", cpf); //Responsável pelo armazenamento da informação coletada. 
 	
-	strcpy(arquivo, cpf); //Responsável por copiar os valores de string, nesse caso o valor de cpf será copiado em arquivo.
+	strcpy(arquivoRegistro, cpf); //Responsável por copiar os valores de string, nesse caso o valor de cpf será copiado em arquivo.
 	
 	FILE *file; //Responsável por buscar o tipo de arquivo que será criado no banco de dados.
-	file = fopen(arquivo, "w"); //O comando "w" é responsável por criar o tipo de arquivo informado em FILE *file.
-	fprintf(file,"CPF:%s",cpf); //Responsável por salvar o valor coletado pela variável.
+	file = fopen(arquivoRegistro, "w"); //O comando "w" é responsável por criar o tipo de arquivo informado em FILE *file.
+	fprintf(file,"CPF:%s\n",cpf); //Responsável por salvar o valor coletado pela variável.
 	fclose(file); //Responsável por fechar o arquivo.
-	
-	file = fopen(arquivo, "a"); //O comando "a" é responsável por atualizar o arquivo file criado.
-	fprintf(file, "\n"); //Será usado para fazer a separação das variáves que serão armazenadas no arquivo.
-	fclose(file);
 	
 	printf(" Digite o Nome a ser cadastrado: "); 
 	scanf("%s", nome); 
 	
-	file = fopen(arquivo, "a");
-	fprintf(file,"Nome:%s", nome);
-	fclose(file);
-	
-	file = fopen(arquivo, "a");
-	fprintf(file, "\n");
+	file = fopen(arquivoRegistro, "a");
+	fprintf(file,"Nome:%s\n", nome);
 	fclose(file);
 	
 	printf(" Digite o Sobrenome a ser cadastrado: "); 
 	scanf("%s", sobrenome); 
 	
-	file = fopen(arquivo, "a");
-	fprintf(file,"Sobrenome:%s", sobrenome); 
-	fclose(file);
-	
-	file = fopen(arquivo, "a");
-	fprintf(file, "\n");
+	file = fopen(arquivoRegistro, "a");
+	fprintf(file,"Sobrenome:%s\n", sobrenome); 
 	fclose(file);
 	
 	printf(" Digite o Cargo a ser cadastrado: "); 
 	scanf("%s", cargo); 
 	
-	file = fopen(arquivo, "a");
+	file = fopen(arquivoRegistro, "a");
 	fprintf(file,"Cargo:%s", cargo); 
 	fclose(file);  
 	
@@ -123,8 +236,38 @@ int main() //Função responsável por executrar o programa.
 {
 	int opcao = 0; //Variável que define a escolha do usuário no menu. 
 	int laco = 1; //Variável que será executado no laço.
+	int autentificacao = 0; 
 	
-	for (laco = 1;laco = 1;) //Estrutura de repetição usada para quando houver uma escolha de opção o programa retorne ao menu.
+	while (!autentificacao)
+	{
+		int escolha;
+		
+		setlocale(LC_ALL, "Portuguese"); //Comando que irá procurar e definir a língua que será executada.
+		system("cls");
+		
+		printf("---------- Cartório da Ebac ----------\n\n"); //Início do menu.
+		printf("1. Registrar novo usuário\n");
+        printf("2. Login\n");
+        printf("Escolha uma opção: ");
+        scanf("%d", &escolha);
+        
+        switch (escolha)
+        {
+        	case 1:
+        	registroUsuario();
+        	break;
+        	
+        	case 2:
+        	autentificacao = loginUsuario();
+        	break;
+        	
+        	default:
+        	printf("Opção inválida! Tente novamente.\n");
+        	break;
+        }
+	}
+	
+	while (laco == 1) //Estrutura de repetição usada para quando houver uma escolha de opção o programa retorne ao menu.
 	{
 		
 		system("cls"); //Limpa a tela quando o laço for executado.
@@ -164,8 +307,8 @@ int main() //Função responsável por executrar o programa.
 			break;
 			
 			default: 
-				printf("\n Essa opção não está disponivél!\n\n");
-				system("pause");
+			printf("\n Essa opção não está disponivél!\n\n");
+			system("pause");
 			break;			
 		} //Fim seleção.
 	}
