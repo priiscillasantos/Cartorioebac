@@ -3,6 +3,32 @@
 #include <locale.h> //Biblioteca responsável por alocar texto por região.
 #include <string.h> //Biblioteca responsável por cuidar das strings.
 
+int usuarioExiste(char *usuario) //Verifica se o usuário a ser cadastrado já existe.
+{
+	char arquivoLinha[100];
+    char conteudoUsuario[10];
+    
+    FILE *file = fopen("users.txt", "r"); //Faz a abertura do arquivo que contem as informações dos usuários. 
+    if (file == NULL) //Verifica se o arquivo users.txt existe. 
+	{
+        return 0; // Arquivo não existe ainda, então usuário não existe
+    }
+
+    while (fgets(arquivoLinha, sizeof(arquivoLinha), file)) //Loop que faz a leitura do arquivo linha por linha.
+	{
+        sscanf(arquivoLinha, "Usuario:%s", conteudoUsuario); 
+        if (strcmp(usuario, conteudoUsuario) == 0) //Função que faz a verificação se as informações são correspondentes.
+		{
+            fclose(file);
+            return 1; // Sendo correspondente, usuário já existe
+        }
+    }
+
+    fclose(file);
+    return 0; // Não sendo, usuário não existe
+}
+
+
 int registroUsuario()//Função para registro de um novo usuário.
 {
 	//Variáveis resposáveis pelo armazenamento das informações que serão coletadas. 
@@ -13,8 +39,20 @@ int registroUsuario()//Função para registro de um novo usuário.
 	char senha[10];
 	char confirmaSenha[10];
 	
-	printf("Digite o nome do usuário que deseja cadastrar: ");
-	scanf("%s", usuario); //Váriavél que armazenará o usuario que será criado.
+	while (1) 
+	{
+    	printf("\nDigite o nome do usuário que deseja cadastrar: ");
+        scanf("%s", usuario); // Variável que armazenará o usuário que será criado.
+
+        if (usuarioExiste(usuario)) //A função de verificação será chamada usando como parametro a variavel usuario para verificação se o usuario digitado é existente. 
+		{
+            printf("\nNome de usuário já existe. Tente novamente.\n\n"); //Retorna para usuario digitar outro nome de usuario.
+        }
+		else 
+		{
+            break; //Caso não exista, continuará o cadastro. 
+        }
+    }
 	
 	FILE *file; 
 	file = fopen("users.txt", "a");//Função que irá criar o arquivo que conterá as informações de login e usuário.
@@ -86,7 +124,7 @@ int loginUsuario() //Função para efetuar o login no sistema.
 	char conteudoSenha[10];
 	int loginSucesso = 0;
 	
-	printf("Digite login de usuário: ");
+	printf("\nDigite login de usuário: ");
 	scanf("%s", usuario);
 	printf("Digite senha do usuário: ");
 	scanf("%s", senha);
@@ -128,7 +166,7 @@ int loginUsuario() //Função para efetuar o login no sistema.
 	}
 }
 
-int registro() //Função que será executada quando a opção for 1.
+int registro() //Função que será executada quando a opção do menu do sistema for 1.
 {
  //Variáveis resposáveis pelo armazenamento das informações que serão coletadas. 
 	char arquivoRegistro [40];
@@ -172,7 +210,7 @@ int registro() //Função que será executada quando a opção for 1.
 	system("pause");	
 }
 
-int consulta() //Função que será executada quando a opção for 2.
+int consulta() //Função que será executada quando a opção do menu do sistema for 2.
 {
 	setlocale(LC_ALL, "Portuguese"); //Comando que irá procurar e definir a língua que será executada.
 	
@@ -204,7 +242,7 @@ int consulta() //Função que será executada quando a opção for 2.
 	system("pause");
 }
 
-int deletar() //Função que será executada quando a opção for 3.
+int deletar() //Função que será executada quando a opção a opção do menu for 3.
 {
 	char cpf [40]; //Receberá o valor que será usado para buscar o cpf que será removido do banco de dados. 
 	
@@ -246,9 +284,9 @@ int main() //Função responsável por executrar o programa.
 		system("cls");
 		
 		printf("---------- Cartório da Ebac ----------\n\n"); //Início do menu.
-		printf("1. Registrar novo usuário\n");
-        printf("2. Login\n");
-        printf("Escolha uma opção: ");
+		printf("\t1. Registrar novo usuário\n");
+        printf("\t2. Login\n");
+        printf("\nEscolha uma opção: ");
         scanf("%d", &escolha);
         
         switch (escolha)
@@ -262,7 +300,8 @@ int main() //Função responsável por executrar o programa.
         	break;
         	
         	default:
-        	printf("Opção inválida! Tente novamente.\n");
+        	printf("\nOpção inválida! Tente novamente.\n\n");
+        	system("pause");
         	break;
         }
 	}
